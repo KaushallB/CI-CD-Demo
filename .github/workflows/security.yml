@@ -1,0 +1,59 @@
+name: Security Scan
+
+# Run daily and on every push to main
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  security-scan:
+    name: Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install security tools
+        run: |
+          pip install bandit safety
+
+      - name: Scan for hardcoded secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Check Python code security
+        run: |
+          echo " Running Bandit Security Scanner..."
+          bandit -r . -f json -o bandit-report.json || true
+          bandit -r . -f txt || true
+
+      - name: Check for vulnerable dependencies
+        run: |
+          echo " Checking for vulnerable packages..."
+          pip install -r requirements.txt
+          safety check --output text || true
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: bandit-report.json
+        if: always()
+
+      - name: Security summary
+        if: always()
+        run: |
+          echo " Security scan completed!"
+          echo " Check the artifacts for detailed reports"

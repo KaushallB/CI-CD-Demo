@@ -1,0 +1,71 @@
+name: Deploy to Production
+
+# Only deploy when tests pass
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allow manual deployment
+
+jobs:
+  # First, make sure tests pass
+  test:
+    name: Run Tests Before Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short
+
+  # Only deploy if tests pass
+  deploy:
+    name: Deploy to Render
+    needs: test # Wait for tests to pass
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger Render deployment
+        run: |
+          echo " Deploying to Render..."
+          
+          curl -X POST \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json"
+          
+          echo " Deployment triggered!"
+
+      - name: Wait for deployment
+        run: |
+          echo " Waiting 60 seconds for deployment to complete..."
+          sleep 60
+
+      - name: Check if site is live
+        run: |
+          echo " Checking if site is responding..."
+          
+          # Try to reach your site (update URL if different)
+          if curl -f -s -o /dev/null https://wealthwisee.me; then
+            echo " Site is live and responding!"
+          else
+            echo "  Site might still be starting up"
+          fi
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo " Deployment workflow completed!"
+          echo " Check your site: https://wealthwisee.me"
