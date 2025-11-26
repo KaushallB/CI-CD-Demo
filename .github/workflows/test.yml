@@ -2,11 +2,11 @@ name: Test & Quality Check
 
 # Run on every push and pull request
 on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-    
+  #push:
+   # branches: [ main, develop ]
+  #pull_request:
+    #branches: [ main ]
+
   workflow_dispatch: # Allow manual trigger
 
 jobs:
