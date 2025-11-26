@@ -1,4 +1,5 @@
 This repository demonstrates an approach to continuous integration, continuous deployment (CI/CD), and automated testing for a modern Python web application. 
+
 ## Overview
 
 - **Automated Testing:** Comprehensive test suite using `pytest` for unit and integration tests.
@@ -8,11 +9,12 @@ This repository demonstrates an approach to continuous integration, continuous d
 
 ## Features
 
-- Sample Flask application structure 
-- Example test files covering forms, routes, security, and helpers
+- Flask application structure  based on my project Wealtwisee
+- Test files covering forms, routes, security, and helpers
 - GitHub Actions workflows for:
   - Running tests and linting
   - Security scanning (Bandit, Safety)
   - Code quality checks
+  - Automatic Deloyment
 - Template for environment variable management
 
