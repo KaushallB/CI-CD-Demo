@@ -1,4 +1,6 @@
-This repository demonstrates an approach to continuous integration, continuous deployment (CI/CD), and automated testing for a modern Python web application. 
+This repository showcases the CI/CD pipelines and automated testing infrastructure implemented for WealthWise (https://wealthwisee.me), a personal finance management platform.
+
+Note: The actual WealthWise application runs from a private repository directly connected to Render for production deployments. This repository contains the same workflow files and test structure for **learning and demonstration purposes**.
 
 ## Overview
 
